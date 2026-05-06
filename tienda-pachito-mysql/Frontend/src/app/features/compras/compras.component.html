@@ -1,0 +1,77 @@
+<div class="compras-page">
+  <div class="page-header">
+    <div>
+      <h1>Registro de Compras</h1>
+      <p class="subtitle">PB-04 · Reabastecer inventario</p>
+    </div>
+  </div>
+
+  <div class="compras-grid">
+    <!-- FORMULARIO -->
+    <div class="card">
+      <h2>Nueva Compra</h2>
+
+      <div class="form-group">
+        <label>Producto *</label>
+        <select [(ngModel)]="form.producto_id">
+          <option value="0" disabled>Seleccionar producto...</option>
+          @for (p of productos(); track p.id) {
+            <option [value]="p.id">{{ p.emoji }} {{ p.nombre }} — Stock actual: {{ p.stock }}</option>
+          }
+        </select>
+      </div>
+
+      @if (productoSeleccionado()) {
+        <div class="producto-preview">
+          <span class="prev-emoji">{{ productoSeleccionado()!.emoji }}</span>
+          <div>
+            <div class="prev-nombre">{{ productoSeleccionado()!.nombre }}</div>
+            <div class="prev-stock">Stock actual: {{ productoSeleccionado()!.stock }} u.</div>
+          </div>
+        </div>
+      }
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Cantidad a comprar *</label>
+          <input type="number" [(ngModel)]="form.cantidad" min="1" placeholder="0" />
+        </div>
+        <div class="form-group">
+          <label>Costo unitario (COP)</label>
+          <input type="number" [(ngModel)]="form.costo_unitario" min="0" placeholder="0" />
+        </div>
+      </div>
+
+      <div class="total-compra">
+        <span>Total inversión</span>
+        <span class="total-val">{{ totalCompra() | cop }}</span>
+      </div>
+
+      <button class="btn-registrar" [disabled]="procesando() || !form.producto_id || form.cantidad <= 0" (click)="registrar()">
+        @if (procesando()) { Registrando... } @else { Registrar Compra }
+      </button>
+    </div>
+
+    <!-- HISTORIAL -->
+    <div class="card">
+      <h2>Historial de Compras</h2>
+      @if (historial().length === 0) {
+        <div class="empty">No hay compras registradas</div>
+      }
+      <div class="historial-list">
+        @for (c of historial(); track c.id) {
+          <div class="compra-row">
+            <div class="compra-info">
+              <span class="compra-nombre">{{ c.producto_nombre }}</span>
+              <span class="compra-meta">{{ c.cantidad }} unidades · {{ c.fecha }}</span>
+            </div>
+            <div class="compra-right">
+              <span class="compra-total">{{ c.total | cop }}</span>
+              <span class="compra-unit">{{ c.costo_unitario | cop }}/u.</span>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,62 @@
+import { Component, OnInit, signal, computed } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { ApiService } from '../../core/services/api.service';
+import { ToastService } from '../../core/services/toast.service';
+import { Producto, Compra } from '../../core/models/models';
+import { CopPipe } from '../../shared/pipes/cop.pipe';
+
+@Component({
+  selector: 'app-compras',
+  standalone: true,
+  imports: [CommonModule, FormsModule, CopPipe],
+  templateUrl: './compras.component.html',
+  styleUrls: ['./compras.component.scss']
+})
+export class ComprasComponent implements OnInit {
+  productos = signal<Producto[]>([]);
+  historial = signal<Compra[]>([]);
+  procesando = signal(false);
+
+  form = { producto_id: 0, cantidad: 1, costo_unitario: 0 };
+
+  productoSeleccionado = computed(() =>
+    this.productos().find(p => p.id === +this.form.producto_id) || null
+  );
+
+  totalCompra = computed(() =>
+    this.form.cantidad * this.form.costo_unitario
+  );
+
+  constructor(private api: ApiService, private toast: ToastService) {}
+
+  ngOnInit() {
+    this.api.getProductos().subscribe(p => this.productos.set(p));
+    this.api.getCompras().subscribe(c => this.historial.set(c.slice().reverse()));
+  }
+
+  registrar() {
+    if (!this.form.producto_id || this.form.cantidad <= 0) {
+      this.toast.mostrar('Selecciona producto y cantidad', 'error');
+      return;
+    }
+    this.procesando.set(true);
+    this.api.crearCompra({
+      producto_id: +this.form.producto_id,
+      cantidad: this.form.cantidad,
+      costo_unitario: this.form.costo_unitario
+    }).subscribe({
+      next: () => {
+        this.toast.mostrar('Compra registrada. Stock actualizado.');
+        this.form = { producto_id: 0, cantidad: 1, costo_unitario: 0 };
+        this.api.getCompras().subscribe(c => this.historial.set(c.slice().reverse()));
+        this.api.getProductos().subscribe(p => this.productos.set(p));
+        this.procesando.set(false);
+      },
+      error: (err) => {
+        this.toast.mostrar(err?.error?.error || 'Error al registrar compra', 'error');
+        this.procesando.set(false);
+      }
+    });
+  }
+}

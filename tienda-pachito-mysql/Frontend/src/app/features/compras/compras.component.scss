@@ -1,0 +1,39 @@
+.compras-page { max-width: 1100px; }
+.page-header { margin-bottom: 24px;
+  h1 { font-size: 24px; font-weight: 700; color: #1a1a2e; margin: 0 0 4px; }
+  .subtitle { font-size: 13px; color: #888; margin: 0; }
+}
+.compras-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.card { background: #fff; border: 1px solid #e8e8e3; border-radius: 12px; padding: 24px;
+  h2 { font-size: 16px; font-weight: 700; color: #1a1a2e; margin: 0 0 20px; }
+}
+.form-group { margin-bottom: 16px;
+  label { display: block; font-size: 13px; font-weight: 600; color: #555; margin-bottom: 7px; }
+  input, select { width: 100%; padding: 10px 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; box-sizing: border-box; background: #fff;
+    &:focus { outline: none; border-color: #2ecc71; box-shadow: 0 0 0 3px rgba(46,204,113,0.1); }
+  }
+}
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+.producto-preview { display: flex; align-items: center; gap: 12px; padding: 12px 14px; background: #f0fbf5; border: 1px solid #b2dfcc; border-radius: 9px; margin-bottom: 16px; }
+.prev-emoji { font-size: 24px; }
+.prev-nombre { font-size: 14px; font-weight: 600; color: #1a1a2e; }
+.prev-stock { font-size: 12px; color: #555; }
+
+.total-compra { display: flex; justify-content: space-between; align-items: center; padding: 14px 16px; background: #f8f8f5; border-radius: 10px; margin: 16px 0; font-size: 14px; font-weight: 600; color: #555; }
+.total-val { font-size: 22px; font-weight: 800; color: #3498db; }
+
+.btn-registrar { width: 100%; padding: 14px; background: #3498db; color: white; border: none; border-radius: 10px; font-size: 15px; font-weight: 700; cursor: pointer; transition: background 0.15s;
+  &:hover:not(:disabled) { background: #2980b9; }
+  &:disabled { background: #b8d9f0; cursor: not-allowed; }
+}
+
+.historial-list { display: flex; flex-direction: column; gap: 0; }
+.compra-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #f0f0ea; &:last-child { border-bottom: none; } }
+.compra-info { display: flex; flex-direction: column; gap: 2px; }
+.compra-nombre { font-size: 14px; font-weight: 500; color: #333; }
+.compra-meta { font-size: 12px; color: #aaa; }
+.compra-right { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; }
+.compra-total { font-size: 14px; font-weight: 600; color: #3498db; }
+.compra-unit { font-size: 11px; color: #bbb; }
+.empty { text-align: center; color: #ccc; padding: 32px 0; font-size: 14px; }

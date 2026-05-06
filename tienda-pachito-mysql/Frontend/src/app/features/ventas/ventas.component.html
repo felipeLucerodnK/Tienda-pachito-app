@@ -1,0 +1,116 @@
+<div class="ventas-page">
+  <div class="page-header">
+    <div>
+      <h1>Nueva Venta Rápida</h1>
+      <p class="subtitle">PB-02 · COP</p>
+    </div>
+  </div>
+
+  <div class="ventas-grid">
+    <!-- PANEL IZQUIERDO: FORMULARIO -->
+    <div class="card venta-form">
+      <div class="section-label">SELECCIONAR PRODUCTO</div>
+
+      <div class="productos-lista">
+        @for (p of productos(); track p.id) {
+          <div class="producto-item"
+               [class.selected]="productoSeleccionado()?.id === p.id"
+               [class.sin-stock]="p.stock === 0"
+               (click)="p.stock > 0 ? seleccionar(p) : null">
+            <span class="prod-emoji">{{ p.emoji }}</span>
+            <div class="prod-info">
+              <span class="prod-nombre">{{ p.nombre }}</span>
+              <span class="prod-meta">{{ p.precio | cop }} · Stock: {{ p.stock }} u.</span>
+            </div>
+            @if (p.stock === 0) {
+              <span class="sin-stock-tag">Sin stock</span>
+            }
+            @if (p.alerta_stock && p.stock > 0) {
+              <span class="alerta-tag">⚠</span>
+            }
+          </div>
+        }
+      </div>
+
+      <div class="form-row-2">
+        <div class="form-group">
+          <label class="section-label">CANTIDAD</label>
+          <input type="number" [value]="cantidad()" (input)="setCantidad(+$any($event.target).value)" min="1" [max]="productoSeleccionado()?.stock || 999" />
+        </div>
+        <div class="form-group">
+          <label class="section-label">PRECIO (COP)</label>
+          <input type="text" [value]="productoSeleccionado() ? (productoSeleccionado()!.precio | cop) : ''" readonly placeholder="—" />
+        </div>
+      </div>
+
+      <div class="total-bar">
+        <span>Total (COP)</span>
+        <span class="total-valor">{{ total() | cop }}</span>
+      </div>
+
+      <button class="btn-venta" [disabled]="!productoSeleccionado() || procesando()" (click)="registrarVenta()">
+        @if (procesando()) {
+          Procesando...
+        } @else {
+          Registrar Venta
+        }
+      </button>
+
+      <!-- RECIENTES -->
+      <div class="recientes-header section-label" style="margin-top: 24px;">RECIENTES</div>
+      @if (ventasHoy().length === 0) {
+        <div class="empty-recientes">No hay ventas hoy</div>
+      }
+      @for (v of ventasHoy().slice(0, 4); track v.id) {
+        <div class="venta-reciente">
+          <div class="vr-info">
+            <span>{{ v.producto_nombre }}</span>
+            <span class="vr-meta">x{{ v.cantidad }} · {{ v.fecha }}</span>
+          </div>
+          <span class="vr-total">{{ v.total | cop }}</span>
+        </div>
+      }
+    </div>
+
+    <!-- PANEL DERECHO: INVENTARIO RÁPIDO -->
+    <div class="card inventario-rapido">
+      <div class="card-header">
+        <div>
+          <h2>Inventario de Productos</h2>
+          <span class="subtitle">PB-01/PB-03 · COP</span>
+        </div>
+        <div class="alertas-badge">
+          🔔 <span>{{ productos().length }}</span>
+        </div>
+      </div>
+
+      <table class="tabla-mini">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Producto</th>
+            <th>Precio (COP)</th>
+            <th>Stock</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (p of productos(); track p.id) {
+            <tr [class.row-alert]="p.alerta_stock">
+              <td class="td-id">PB-{{ p.id.toString().padStart(2,'0') }}</td>
+              <td>
+                <span class="prod-emoji-sm">{{ p.emoji }}</span>
+                {{ p.nombre }}
+              </td>
+              <td class="td-precio">{{ p.precio | cop }} <span class="eq">=</span></td>
+              <td>
+                <span class="stock-pill" [class.stock-ok]="!p.alerta_stock" [class.stock-low]="p.alerta_stock && p.stock > 0" [class.stock-empty]="p.stock === 0">
+                  {{ p.stock }} u.
+                </span>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

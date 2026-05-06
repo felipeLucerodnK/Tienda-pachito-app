@@ -1,0 +1,83 @@
+<div class="dashboard">
+  <div class="page-header">
+    <div>
+      <h1>Dashboard</h1>
+      <p class="subtitle">Resumen del día · {{ hoy }}</p>
+    </div>
+    <a routerLink="/ventas" class="btn btn-primary">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Nueva Venta
+    </a>
+  </div>
+
+  <!-- MÉTRICAS -->
+  <div class="metrics-grid">
+    <div class="metric-card">
+      <div class="metric-label">Ingresos hoy</div>
+      <div class="metric-value green">{{ totalHoy() | cop }}</div>
+      <div class="metric-sub">Total vendido en el día</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Transacciones</div>
+      <div class="metric-value">{{ ventasHoy() }}</div>
+      <div class="metric-sub">Ventas registradas hoy</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Productos</div>
+      <div class="metric-value">{{ productosActivos() }}</div>
+      <div class="metric-sub">En inventario activo</div>
+    </div>
+    <div class="metric-card" [class.metric-card--alert]="alertas() > 0">
+      <div class="metric-label">Alertas stock</div>
+      <div class="metric-value red">{{ alertas() }}</div>
+      <div class="metric-sub">Productos bajo mínimo</div>
+    </div>
+  </div>
+
+  <div class="dashboard-grid">
+    <!-- VENTAS RECIENTES -->
+    <div class="card">
+      <div class="card-header">
+        <h2>Ventas recientes</h2>
+        <a routerLink="/reportes" class="link-ver">Ver reporte →</a>
+      </div>
+      @if (ventasRecientes().length === 0) {
+        <div class="empty-state">No hay ventas registradas hoy</div>
+      }
+      @for (v of ventasRecientes(); track v.id) {
+        <div class="list-row">
+          <div class="list-info">
+            <span class="list-name">{{ v.producto_nombre }}</span>
+            <span class="list-meta">x{{ v.cantidad }} unidades</span>
+          </div>
+          <span class="list-amount">{{ v.total | cop }}</span>
+        </div>
+      }
+    </div>
+
+    <!-- ALERTAS STOCK -->
+    <div class="card">
+      <div class="card-header">
+        <h2>Alertas de stock bajo</h2>
+        <a routerLink="/inventario" class="link-ver">Ver inventario →</a>
+      </div>
+      @if (productosAlerta().length === 0) {
+        <div class="empty-state success">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+          Todo el stock está en niveles correctos
+        </div>
+      }
+      @for (p of productosAlerta(); track p.id) {
+        <div class="list-row alert-row">
+          <div class="list-info">
+            <span class="list-name">{{ p.emoji }} {{ p.nombre }}</span>
+            <span class="list-meta">Mínimo: {{ p.stock_minimo }} u.</span>
+          </div>
+          <span class="stock-badge" [class.stock-badge--critical]="p.stock < p.stock_minimo / 2">
+            {{ p.stock }} u.
+          </span>
+        </div>
+      }
+    </div>
+  </div>
+</div>

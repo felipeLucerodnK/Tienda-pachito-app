@@ -1,0 +1,70 @@
+.ventas-page { max-width: 1200px; }
+.page-header { margin-bottom: 24px;
+  h1 { font-size: 24px; font-weight: 700; color: #1a1a2e; margin: 0 0 4px; }
+  .subtitle { font-size: 13px; color: #888; margin: 0; }
+}
+.ventas-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.card { background: #fff; border: 1px solid #e8e8e3; border-radius: 12px; padding: 22px; }
+.card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 18px;
+  h2 { font-size: 15px; font-weight: 700; color: #1a1a2e; margin: 0 0 3px; }
+  .subtitle { font-size: 12px; color: #888; }
+}
+.section-label { font-size: 11px; font-weight: 700; letter-spacing: 0.6px; color: #aaa; text-transform: uppercase; margin-bottom: 10px; }
+
+.productos-lista { display: flex; flex-direction: column; gap: 6px; margin-bottom: 18px; max-height: 280px; overflow-y: auto; }
+.producto-item {
+  display: flex; align-items: center; gap: 10px; padding: 10px 14px; border: 1px solid #e8e8e3; border-radius: 9px; cursor: pointer; transition: all 0.15s;
+  &:hover:not(.sin-stock) { border-color: #2ecc71; background: #f0fbf5; }
+  &.selected { border-color: #2ecc71; background: #d4edda; }
+  &.sin-stock { opacity: 0.45; cursor: not-allowed; }
+}
+.prod-emoji { font-size: 20px; }
+.prod-info { flex: 1; }
+.prod-nombre { font-size: 14px; font-weight: 500; color: #333; display: block; }
+.prod-meta { font-size: 12px; color: #999; }
+.sin-stock-tag { font-size: 11px; background: #fde8e8; color: #c0392b; padding: 2px 8px; border-radius: 10px; font-weight: 600; }
+.alerta-tag { font-size: 14px; }
+
+.form-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+.form-group {
+  label { display: block; margin-bottom: 6px; }
+  input { width: 100%; padding: 10px 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; box-sizing: border-box;
+    &:focus { outline: none; border-color: #2ecc71; }
+    &[readonly] { background: #fafafa; color: #888; }
+  }
+}
+
+.total-bar { display: flex; justify-content: space-between; align-items: center; padding: 14px 16px; background: #f8f8f5; border-radius: 10px; margin-bottom: 14px;
+  font-size: 14px; font-weight: 600; color: #555;
+}
+.total-valor { font-size: 22px; font-weight: 800; color: #2ecc71; }
+
+.btn-venta { width: 100%; padding: 14px; background: #2ecc71; color: white; border: none; border-radius: 10px; font-size: 15px; font-weight: 700; cursor: pointer; transition: background 0.15s;
+  &:hover:not(:disabled) { background: #27ae60; }
+  &:disabled { background: #b2dfcc; cursor: not-allowed; }
+}
+
+.recientes-header { margin-bottom: 8px; }
+.empty-recientes { font-size: 13px; color: #ccc; text-align: center; padding: 12px 0; }
+.venta-reciente { display: flex; justify-content: space-between; align-items: center; padding: 9px 0; border-bottom: 1px solid #f5f5f0; &:last-child { border-bottom: none; } }
+.vr-info { display: flex; flex-direction: column; font-size: 13px; font-weight: 500; color: #333; }
+.vr-meta { font-size: 11px; color: #aaa; }
+.vr-total { font-size: 13px; font-weight: 600; color: #2ecc71; }
+
+// tabla mini
+.tabla-mini { width: 100%; border-collapse: collapse;
+  th { padding: 10px 12px; text-align: left; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #aaa; border-bottom: 1px solid #e8e8e3; }
+  td { padding: 12px 12px; font-size: 13px; color: #333; border-bottom: 1px solid #f5f5f0; }
+  tr:last-child td { border-bottom: none; }
+  tr.row-alert td { background: #fffdf0; }
+}
+.td-id { font-size: 11px; color: #bbb; font-weight: 600; }
+.td-precio { font-weight: 600; color: #1a1a2e; }
+.eq { color: #ccc; }
+.prod-emoji-sm { font-size: 15px; margin-right: 4px; }
+.stock-pill { font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 20px;
+  &.stock-ok { background: #d4edda; color: #155724; }
+  &.stock-low { background: #fff3cd; color: #856404; }
+  &.stock-empty { background: #fde8e8; color: #721c24; }
+}
+.alertas-badge { background: #fff3cd; color: #856404; padding: 6px 12px; border-radius: 8px; font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 6px; }

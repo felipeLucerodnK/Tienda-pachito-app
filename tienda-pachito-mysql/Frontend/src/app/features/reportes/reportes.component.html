@@ -1,0 +1,106 @@
+<div class="reportes-page">
+  <div class="page-header">
+    <div>
+      <h1>Reporte Diario</h1>
+      <p class="subtitle">PB-05 · Resumen de ventas</p>
+    </div>
+    <div class="filtro-fecha">
+      <label>Filtrar por fecha</label>
+      <input type="date" [(ngModel)]="fechaSeleccionada" (change)="cargar()" />
+      <button class="btn btn-primary" (click)="cargar()">Generar</button>
+    </div>
+  </div>
+
+  @if (cargando()) {
+    <div class="loading">Cargando reporte...</div>
+  }
+
+  @if (reporte(); as r) {
+    <!-- MÉTRICAS -->
+    <div class="metrics-row">
+      <div class="metric-card">
+        <div class="metric-lbl">Ingresos totales</div>
+        <div class="metric-val green">{{ r.total_ingresos | cop }}</div>
+        <div class="metric-sub">{{ r.fecha }}</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-lbl">Transacciones</div>
+        <div class="metric-val">{{ r.total_transacciones }}</div>
+        <div class="metric-sub">Ventas del día</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-lbl">Unidades vendidas</div>
+        <div class="metric-val">{{ r.total_unidades_vendidas }}</div>
+        <div class="metric-sub">Productos despachados</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-lbl">Ticket promedio</div>
+        <div class="metric-val">{{ r.total_transacciones > 0 ? (r.total_ingresos / r.total_transacciones | cop) : ('$ 0') }}</div>
+        <div class="metric-sub">Por transacción</div>
+      </div>
+    </div>
+
+    <div class="report-grid">
+      <!-- RESUMEN POR PRODUCTO -->
+      <div class="card">
+        <h2>Resumen por producto</h2>
+        @if (r.resumen_por_producto.length === 0) {
+          <div class="empty">Sin ventas en esta fecha</div>
+        }
+        @for (p of r.resumen_por_producto; track p.producto) {
+          <div class="prod-row">
+            <div class="prod-info">
+              <span class="prod-nombre">{{ p.producto }}</span>
+              <span class="prod-meta">{{ p.cantidad }} unidades vendidas</span>
+            </div>
+            <div class="prod-right">
+              <span class="prod-total">{{ p.total | cop }}</span>
+              <div class="progress-bar">
+                <div class="progress-fill" [style.width.%]="porcentaje(p.total, r.total_ingresos)"></div>
+              </div>
+              <span class="prod-pct">{{ porcentaje(p.total, r.total_ingresos) }}%</span>
+            </div>
+          </div>
+        }
+      </div>
+
+      <!-- DETALLE VENTAS -->
+      <div class="card">
+        <h2>Detalle de transacciones</h2>
+        @if (r.detalle_ventas.length === 0) {
+          <div class="empty">No hay transacciones en esta fecha</div>
+        }
+        <div class="tabla-wrap">
+          <table class="tabla-detalle">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Producto</th>
+                <th>Cant.</th>
+                <th>P. Unit.</th>
+                <th>Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (v of r.detalle_ventas; track v.id) {
+                <tr>
+                  <td class="td-id">{{ v.id }}</td>
+                  <td>{{ v.producto_nombre }}</td>
+                  <td>{{ v.cantidad }}</td>
+                  <td>{{ v.precio_unitario | cop }}</td>
+                  <td class="td-total">{{ v.total | cop }}</td>
+                </tr>
+              }
+            </tbody>
+            <tfoot>
+              <tr>
+                <td colspan="4" class="tf-label">TOTAL</td>
+                <td class="tf-total">{{ r.total_ingresos | cop }}</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+    </div>
+  }
+</div>
