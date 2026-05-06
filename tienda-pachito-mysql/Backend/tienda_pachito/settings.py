@@ -1,4 +1,5 @@
 from pathlib import Path
+import os
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -40,11 +41,11 @@ REST_FRAMEWORK = {
 DATABASES = {
     'default': {
         'ENGINE':   'django.db.backends.mysql',
-        'NAME':     'tienda_pachito',
-        'USER':     'root',
-        'PASSWORD': '1234',
-        'HOST':     'localhost',
-        'PORT':     '3306',
+        'NAME':     os.environ.get('MYSQL_DATABASE', 'tienda_pachito'),
+        'USER':     os.environ.get('MYSQL_USER', 'root'),
+        'PASSWORD': os.environ.get('MYSQL_PASSWORD', '1234'),
+        'HOST':     os.environ.get('MYSQL_HOST', 'localhost'),
+        'PORT':     os.environ.get('MYSQL_PORT', '3306'),
         'OPTIONS': {
             'charset': 'utf8mb4',
             'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
