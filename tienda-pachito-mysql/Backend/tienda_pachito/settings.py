@@ -28,7 +28,10 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'tienda_pachito.urls'
 
-CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOWED_ORIGINS = [
+    'https://tienda-pachito-app-production.up.railway.app',
+    'http://localhost:4200',
+]
 
 REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': [
