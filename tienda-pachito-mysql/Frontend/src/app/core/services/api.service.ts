@@ -5,7 +5,7 @@ import { Producto, Venta, Compra, ReporteDiario, ReporteRango } from '../models/
 
 @Injectable({ providedIn: 'root' })
 export class ApiService {
-  private base = '/api';
+  private base = 'https://tienda-pachito-app-production-63e3.up.railway.app/api';;
 
   constructor(private http: HttpClient) {}
 
