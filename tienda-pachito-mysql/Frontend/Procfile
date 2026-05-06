@@ -1,1 +1,1 @@
-web: npm run build && npx serve -s dist/tienda-pachito-frontend/browser --listen $PORT --no-clipboard
+web: npm run build && npx http-server dist/tienda-pachito-frontend/browser -p $PORT --proxy http://localhost:$PORT?
