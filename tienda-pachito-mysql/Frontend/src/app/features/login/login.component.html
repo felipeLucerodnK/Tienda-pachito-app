@@ -1,0 +1,26 @@
+<div class="login-wrapper">
+  <div class="login-card">
+    <div class="login-header">
+      <h1>🏪 Tienda Pachito</h1>
+      <p>Inicia sesión para continuar</p>
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <div class="field">
+        <label>Usuario</label>
+        <input formControlName="username" type="text" placeholder="Tu usuario" autocomplete="username" />
+      </div>
+
+      <div class="field">
+        <label>Contraseña</label>
+        <input formControlName="password" type="password" placeholder="••••••••" autocomplete="current-password" />
+      </div>
+
+      <div class="error-msg" *ngIf="error">{{ error }}</div>
+
+      <button type="submit" [disabled]="loading">
+        {{ loading ? 'Entrando...' : 'Iniciar sesión' }}
+      </button>
+    </form>
+  </div>
+</div>
