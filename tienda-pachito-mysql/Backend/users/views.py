@@ -4,9 +4,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import authenticate
-from .serializers import UserSerializer
 from rest_framework import viewsets
-from rest_framework.permissions import IsAuthenticated
 from .models import CustomUser
 from .serializers import UserSerializer
 
@@ -17,12 +15,23 @@ class LoginView(APIView):
         username = request.data.get('username')
         password = request.data.get('password')
 
+        if not username or not password:
+            return Response({'error': 'Por favor ingresa usuario y contraseña'}, status=400)
+
+        # Verificar si el usuario existe
+        try:
+            user_obj = CustomUser.objects.get(username=username)
+        except CustomUser.DoesNotExist:
+            return Response({'error': f'El usuario "{username}" no existe'}, status=401)
+
+        # Verificar si está activo
+        if not user_obj.is_active:
+            return Response({'error': 'Este usuario está desactivado, contacta al administrador'}, status=403)
+
+        # Verificar contraseña
         user = authenticate(username=username, password=password)
         if not user:
-            return Response({'error': 'Credenciales inválidas'}, status=401)
-
-        if not user.is_active:
-            return Response({'error': 'Usuario inactivo'}, status=403)
+            return Response({'error': 'Contraseña incorrecta'}, status=401)
 
         refresh = RefreshToken.for_user(user)
         return Response({
@@ -37,7 +46,8 @@ class MeView(APIView):
 
     def get(self, request):
         return Response(UserSerializer(request.user, context={'request': request}).data)
-    
+
+
 class UsuarioViewSet(viewsets.ModelViewSet):
     queryset = CustomUser.objects.all().order_by('-fecha_creacion')
     serializer_class = UserSerializer
