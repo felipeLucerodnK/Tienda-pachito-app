@@ -7,7 +7,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model  = CustomUser
-        fields = ['id', 'username', 'email', 'nombre', 'rol', 'foto', 'foto_url']
+        fields = ['id', 'username', 'email', 'nombre', 'rol', 'is_active', 'foto', 'foto_url']
         extra_kwargs = {'foto': {'write_only': True}}
 
     def get_foto_url(self, obj):
