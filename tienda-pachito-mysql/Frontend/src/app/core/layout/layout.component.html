@@ -111,3 +111,18 @@
     </div>
   }
 </div>
+
+<!-- BOTÓN FLOTANTE TETRIS -->
+<button class="tetris-fab" (click)="toggleTetris()" title="Mini Tetris">
+  🎮
+</button>
+
+<!-- MODAL TETRIS -->
+@if (mostrarTetris()) {
+  <div class="tetris-backdrop" (click)="toggleTetris()">
+    <div class="tetris-modal" (click)="$event.stopPropagation()">
+      <button class="tetris-modal-close" (click)="toggleTetris()">×</button>
+      <app-tetris />
+    </div>
+  </div>
+}
