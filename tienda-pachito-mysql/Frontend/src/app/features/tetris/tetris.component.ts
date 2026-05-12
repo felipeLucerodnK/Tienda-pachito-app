@@ -108,7 +108,7 @@ const PIEZAS = [
   `]
 })
 export class TetrisComponent implements OnInit, OnDestroy {
-  COLS = COLS; BLOCK = BLOCK;
+  COLS = COLS; ROWS = ROWS; BLOCK = BLOCK;
   puntos  = signal(0);
   nivel   = signal(1);
   corriendo = signal(false);
