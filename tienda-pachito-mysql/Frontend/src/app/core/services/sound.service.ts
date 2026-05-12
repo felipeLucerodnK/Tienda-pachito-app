@@ -114,4 +114,90 @@ export class SoundService {
     osc.start(t);
     osc.stop(t + 0.08);
   }
+
+    // Sonido al rotar pieza
+    rotarPieza() {
+    const ctx = this.getContext();
+    const t = ctx.currentTime;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(400, t);
+    osc.frequency.setValueAtTime(600, t + 0.05);
+    gain.gain.setValueAtTime(0.15, t);
+    gain.gain.exponentialRampToValueAtTime(0.001, t + 0.1);
+    osc.start(t);
+    osc.stop(t + 0.1);
+    }
+
+    // Sonido al mover pieza
+    moverPieza() {
+    const ctx = this.getContext();
+    const t = ctx.currentTime;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(250, t);
+    gain.gain.setValueAtTime(0.08, t);
+    gain.gain.exponentialRampToValueAtTime(0.001, t + 0.06);
+    osc.start(t);
+    osc.stop(t + 0.06);
+    }
+
+    // Sonido al limpiar línea
+    limpiarLinea() {
+    const ctx = this.getContext();
+    const t = ctx.currentTime;
+    [0, 0.08, 0.16, 0.24].forEach((delay, i) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.type = 'square';
+        osc.frequency.setValueAtTime([300, 400, 500, 700][i], t + delay);
+        gain.gain.setValueAtTime(0.2, t + delay);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + delay + 0.1);
+        osc.start(t + delay);
+        osc.stop(t + delay + 0.1);
+    });
+    }
+
+    // Sonido al fijar pieza
+    fijarPieza() {
+    const ctx = this.getContext();
+    const t = ctx.currentTime;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(180, t);
+    osc.frequency.exponentialRampToValueAtTime(120, t + 0.1);
+    gain.gain.setValueAtTime(0.2, t);
+    gain.gain.exponentialRampToValueAtTime(0.001, t + 0.12);
+    osc.start(t);
+    osc.stop(t + 0.12);
+    }
+
+    // Sonido de game over
+    gameOverSonido() {
+    const ctx = this.getContext();
+    const t = ctx.currentTime;
+    [0, 0.2, 0.4, 0.65].forEach((delay, i) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime([400, 300, 200, 100][i], t + delay);
+        gain.gain.setValueAtTime(0.3, t + delay);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + delay + 0.2);
+        osc.start(t + delay);
+        osc.stop(t + delay + 0.2);
+    });
+    }
 }

@@ -1,18 +1,19 @@
 import { Component, OnInit, OnDestroy, HostListener, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { SoundService } from '../../core/services/sound.service';
 
 const COLS = 10;
 const ROWS = 20;
 const BLOCK = 28;
 
 const PIEZAS = [
-  { forma: [[1,1,1,1]], color: '#00f0f0' },           // I
-  { forma: [[1,1],[1,1]], color: '#f0f000' },          // O
-  { forma: [[0,1,0],[1,1,1]], color: '#a000f0' },      // T
-  { forma: [[0,1,1],[1,1,0]], color: '#00f000' },      // S
-  { forma: [[1,1,0],[0,1,1]], color: '#f00000' },      // Z
-  { forma: [[1,0,0],[1,1,1]], color: '#0000f0' },      // J
-  { forma: [[0,0,1],[1,1,1]], color: '#f0a000' },      // L
+  { forma: [[1,1,1,1]], color: '#00f0f0' },
+  { forma: [[1,1],[1,1]], color: '#f0f000' },
+  { forma: [[0,1,0],[1,1,1]], color: '#a000f0' },
+  { forma: [[0,1,1],[1,1,0]], color: '#00f000' },
+  { forma: [[1,1,0],[0,1,1]], color: '#f00000' },
+  { forma: [[1,0,0],[1,1,1]], color: '#0000f0' },
+  { forma: [[0,0,1],[1,1,1]], color: '#f0a000' },
 ];
 
 @Component({
@@ -52,7 +53,7 @@ const PIEZAS = [
             <div class="control-item"><kbd>P</kbd> Pausa</div>
           </div>
 
-          @if (!corriendo() && !gameOver()) {
+          @if (!corriendo() && !gameOver() && !pausado()) {
             <button class="btn-start" (click)="iniciar()">▶ Iniciar</button>
           }
           @if (corriendo()) {
@@ -98,9 +99,10 @@ const PIEZAS = [
       background: #0f3460; color: white; border: none;
       border-radius: 8px; padding: 0.6rem; font-weight: 700;
       cursor: pointer; width: 100%; font-size: 0.85rem;
-      &:hover { background: #16213e; }
     }
-    .btn-pause { background: #d97706; &:hover { background: #b45309; } }
+    .btn-start:hover { background: #16213e; }
+    .btn-pause { background: #d97706; }
+    .btn-pause:hover { background: #b45309; }
     .game-over {
       text-align: center; font-weight: 900; color: #dc2626;
       font-size: 1rem; letter-spacing: 0.1em;
@@ -122,6 +124,8 @@ export class TetrisComponent implements OnInit, OnDestroy {
   private intervalo: any = null;
   private ctx!: CanvasRenderingContext2D;
   private ctxNext!: CanvasRenderingContext2D;
+
+  constructor(private sound: SoundService) {}
 
   ngOnInit() {
     setTimeout(() => {
@@ -161,18 +165,21 @@ export class TetrisComponent implements OnInit, OnDestroy {
     this.spawnPieza();
     this.corriendo.set(true);
     this.iniciarIntervalo();
+    this.sound.exito();
   }
 
   pausar() {
     this.pausado.set(true);
     this.corriendo.set(false);
     clearInterval(this.intervalo);
+    this.sound.click();
   }
 
   reanudar() {
     this.pausado.set(false);
     this.corriendo.set(true);
     this.iniciarIntervalo();
+    this.sound.click();
   }
 
   detener() { clearInterval(this.intervalo); }
@@ -193,7 +200,7 @@ export class TetrisComponent implements OnInit, OnDestroy {
   }
 
   private spawnPieza() {
-    this.piezaActual  = this.piezaSiguiente;
+    this.piezaActual    = this.piezaSiguiente;
     this.piezaSiguiente = this.nuevaPieza();
     this.posX = Math.floor(COLS / 2) - Math.floor(this.piezaActual.forma[0].length / 2);
     this.posY = 0;
@@ -202,12 +209,14 @@ export class TetrisComponent implements OnInit, OnDestroy {
       this.gameOver.set(true);
       this.corriendo.set(false);
       clearInterval(this.intervalo);
+      this.sound.gameOverSonido();
     }
   }
 
   private tick() {
     if (!this.bajar()) {
       this.fijar();
+      this.sound.fijarPieza();
       this.limpiarLineas();
       this.spawnPieza();
     }
@@ -216,7 +225,9 @@ export class TetrisComponent implements OnInit, OnDestroy {
 
   private mover(dx: number) {
     if (this.esValida(this.piezaActual.forma, this.posX + dx, this.posY)) {
-      this.posX += dx; this.dibujar();
+      this.posX += dx;
+      this.sound.moverPieza();
+      this.dibujar();
     }
   }
 
@@ -229,7 +240,11 @@ export class TetrisComponent implements OnInit, OnDestroy {
 
   private caida() {
     while (this.esValida(this.piezaActual.forma, this.posX, this.posY + 1)) this.posY++;
-    this.fijar(); this.limpiarLineas(); this.spawnPieza(); this.dibujar();
+    this.sound.fijarPieza();
+    this.fijar();
+    this.limpiarLineas();
+    this.spawnPieza();
+    this.dibujar();
   }
 
   private rotar() {
@@ -237,7 +252,9 @@ export class TetrisComponent implements OnInit, OnDestroy {
       this.piezaActual.forma.map((r: any[]) => r[i]).reverse()
     );
     if (this.esValida(rotada, this.posX, this.posY)) {
-      this.piezaActual.forma = rotada; this.dibujar();
+      this.piezaActual.forma = rotada;
+      this.sound.rotarPieza();
+      this.dibujar();
     }
   }
 
@@ -269,10 +286,12 @@ export class TetrisComponent implements OnInit, OnDestroy {
       }
     }
     if (lineas > 0) {
+      this.sound.limpiarLinea();
       const pts = [0, 100, 300, 500, 800][lineas] * this.nivel();
       this.puntos.update(p => p + pts);
       if (this.puntos() >= this.nivel() * 500) {
         this.nivel.update(n => n + 1);
+        this.sound.exito();
         this.iniciarIntervalo();
       }
     }
@@ -283,7 +302,6 @@ export class TetrisComponent implements OnInit, OnDestroy {
     this.ctx.fillStyle = '#111';
     this.ctx.fillRect(0, 0, COLS * BLOCK, ROWS * BLOCK);
 
-    // Grid
     this.ctx.strokeStyle = '#222';
     this.ctx.lineWidth = 0.5;
     for (let x = 0; x < COLS; x++) {
@@ -292,14 +310,12 @@ export class TetrisComponent implements OnInit, OnDestroy {
       }
     }
 
-    // Tablero
     this.tablero.forEach((fila, y) =>
       fila.forEach((color, x) => {
         if (color) this.dibujarBloque(this.ctx, x, y, color);
       })
     );
 
-    // Sombra
     let shadowY = this.posY;
     while (this.esValida(this.piezaActual.forma, this.posX, shadowY + 1)) shadowY++;
     this.piezaActual.forma.forEach((fila: number[], dy: number) =>
@@ -311,7 +327,6 @@ export class TetrisComponent implements OnInit, OnDestroy {
       })
     );
 
-    // Pieza actual
     this.piezaActual.forma.forEach((fila: number[], dy: number) =>
       fila.forEach((val, dx) => {
         if (val) this.dibujarBloque(this.ctx, this.posX + dx, this.posY + dy, this.piezaActual.color);
