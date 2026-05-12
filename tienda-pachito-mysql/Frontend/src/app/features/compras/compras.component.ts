@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ApiService } from '../../core/services/api.service';
 import { ToastService } from '../../core/services/toast.service';
+import { SoundService } from '../../core/services/sound.service';
 import { Producto, Compra } from '../../core/models/models';
 import { CopPipe } from '../../shared/pipes/cop.pipe';
 
@@ -28,7 +29,11 @@ export class ComprasComponent implements OnInit {
     this.form.cantidad * this.form.costo_unitario
   );
 
-  constructor(private api: ApiService, private toast: ToastService) {}
+  constructor(
+    private api: ApiService,
+    private toast: ToastService,
+    private sound: SoundService
+  ) {}
 
   ngOnInit() {
     this.api.getProductos().subscribe(p => this.productos.set(p));
@@ -37,6 +42,7 @@ export class ComprasComponent implements OnInit {
 
   registrar() {
     if (!this.form.producto_id || this.form.cantidad <= 0) {
+      this.sound.error();
       this.toast.mostrar('Selecciona producto y cantidad', 'error');
       return;
     }
@@ -47,6 +53,7 @@ export class ComprasComponent implements OnInit {
       costo_unitario: this.form.costo_unitario
     }).subscribe({
       next: () => {
+        this.sound.compra();
         this.toast.mostrar('Compra registrada. Stock actualizado.');
         this.form = { producto_id: 0, cantidad: 1, costo_unitario: 0 };
         this.api.getCompras().subscribe(c => this.historial.set(c.slice().reverse()));
@@ -54,6 +61,7 @@ export class ComprasComponent implements OnInit {
         this.procesando.set(false);
       },
       error: (err) => {
+        this.sound.error();
         this.toast.mostrar(err?.error?.error || 'Error al registrar compra', 'error');
         this.procesando.set(false);
       }
