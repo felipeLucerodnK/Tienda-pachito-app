@@ -18,14 +18,21 @@ export class LayoutComponent implements OnInit {
   alertas      = signal<Producto[]>([]);
   mostrarAlertas = signal(false);
 
-  navItems = [
+  get navItems() {
+  const items = [
     { path: '/dashboard',  label: 'Dashboard',   icon: 'home'      },
     { path: '/inventario', label: 'Inventario',  icon: 'inventory' },
     { path: '/ventas',     label: 'Nueva Venta', icon: 'cart'      },
     { path: '/reportes',   label: 'Reportes',    icon: 'chart'     },
     { path: '/compras',    label: 'Compras',     icon: 'truck'     },
-    { path: '/usuarios',   label: 'Usuarios',    icon: 'users'     },
   ];
+
+  if (this.auth.isAdmin()) {
+    items.push({ path: '/usuarios', label: 'Usuarios', icon: 'users' });
+  }
+
+  return items;
+}
 
   constructor(
     public toast: ToastService,
