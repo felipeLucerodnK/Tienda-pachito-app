@@ -141,6 +141,8 @@ export class VentasComponent implements OnInit {
       this.toast.mostrar('El carrito está vacío', 'error');
       return;
     }
+    
+    
 
     this.procesando.set(true);
     const items = this.carrito().map(i => ({
@@ -163,5 +165,9 @@ export class VentasComponent implements OnInit {
         this.procesando.set(false);
       }
     });
+  }
+
+  totalGrupo(grupo: Venta[]): number {
+    return grupo.reduce((a, v) => a + v.total, 0);
   }
 }

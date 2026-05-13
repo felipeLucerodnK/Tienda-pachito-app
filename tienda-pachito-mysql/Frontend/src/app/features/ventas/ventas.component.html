@@ -89,7 +89,7 @@
               </span>
             }
           </div>
-          <span class="vr-total">{{ grupo.reduce((a, v) => a + v.total, 0) | cop }}</span>
+          <span class="vr-total">{{ totalGrupo(grupo) | cop }}</span>
           <button class="btn-recibo" title="Ver recibo" (click)="verRecibo(grupo)">🧾</button>
         </div>
       }
