@@ -73,17 +73,24 @@
 
       <!-- RECIENTES -->
       <div class="recientes-header section-label" style="margin-top: 24px;">RECIENTES</div>
-      @if (ventasHoy().length === 0) {
+      @if (gruposVentasHoy().length === 0) {
         <div class="empty-recientes">No hay ventas hoy</div>
       }
-      @for (v of ventasHoy().slice(0, 4); track v.id) {
+      @for (grupo of gruposVentasHoy().slice(0, 4); track grupo[0].id) {
         <div class="venta-reciente">
           <div class="vr-info">
-            <span>{{ v.producto_nombre }}</span>
-            <span class="vr-meta">x{{ v.cantidad }} · {{ v.fecha }}</span>
+            @if (grupo.length === 1) {
+              <span>{{ grupo[0].producto_nombre }}</span>
+              <span class="vr-meta">x{{ grupo[0].cantidad }} · {{ grupo[0].fecha }}</span>
+            } @else {
+              <span>{{ grupo.length }} productos</span>
+              <span class="vr-meta">
+                {{ grupo[0].producto_nombre }}{{ grupo.length > 1 ? ' +' + (grupo.length - 1) + ' más' : '' }}
+              </span>
+            }
           </div>
-          <span class="vr-total">{{ v.total | cop }}</span>
-          <button class="btn-recibo" title="Ver recibo" (click)="verRecibo(v)">🧾</button>
+          <span class="vr-total">{{ grupo.reduce((a, v) => a + v.total, 0) | cop }}</span>
+          <button class="btn-recibo" title="Ver recibo" (click)="verRecibo(grupo)">🧾</button>
         </div>
       }
     </div>

@@ -22,16 +22,29 @@ interface CarritoItem {
   styleUrls: ['./ventas.component.scss']
 })
 export class VentasComponent implements OnInit {
-  productos  = signal<Producto[]>([]);
-  ventasHoy  = signal<Venta[]>([]);
-  carrito    = signal<CarritoItem[]>([]);
-  procesando = signal(false);
-  reciboVentas = signal<Venta[]>([]);
+  productos     = signal<Producto[]>([]);
+  ventasHoy     = signal<Venta[]>([]);
+  carrito       = signal<CarritoItem[]>([]);
+  procesando    = signal(false);
+  reciboVentas  = signal<Venta[]>([]);
   mostrarRecibo = signal(false);
 
   totalCarrito = computed(() =>
     this.carrito().reduce((acc, item) => acc + item.producto.precio * item.cantidad, 0)
   );
+
+  gruposVentasHoy = computed(() => {
+    const ventas = this.ventasHoy();
+    const grupos = new Map<string, Venta[]>();
+
+    ventas.forEach(v => {
+      const key = v.grupo_venta || `solo_${v.id}`;
+      if (!grupos.has(key)) grupos.set(key, []);
+      grupos.get(key)!.push(v);
+    });
+
+    return Array.from(grupos.values());
+  });
 
   hoy = new Date().toLocaleDateString('en-CA');
 
@@ -52,7 +65,7 @@ export class VentasComponent implements OnInit {
   }
 
   cargarVentasHoy() {
-    this.api.getVentas(this.hoy).subscribe(v => 
+    this.api.getVentas(this.hoy).subscribe(v =>
       this.ventasHoy.set([...v].sort((a, b) => b.id - a.id))
     );
   }
@@ -112,8 +125,8 @@ export class VentasComponent implements OnInit {
     return this.carrito().find(i => i.producto.id === productoId)?.cantidad || 0;
   }
 
-  verRecibo(venta: Venta) {
-    this.reciboVentas.set([venta]);
+  verRecibo(ventas: Venta[]) {
+    this.reciboVentas.set(ventas);
     this.mostrarRecibo.set(true);
   }
 
@@ -136,7 +149,7 @@ export class VentasComponent implements OnInit {
     }));
 
     this.api.crearVentaMultiple({ items }).subscribe({
-      next: (ventas) => {
+      next: () => {
         this.sound.cajaRegistradora();
         this.toast.mostrar(`Venta registrada: ${this.carrito().length} producto(s)`);
         this.carrito.set([]);

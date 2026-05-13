@@ -1,14 +1,15 @@
 from django.db import models
 from apps.productos.models import Producto
-
+import uuid
 
 class Venta(models.Model):
     producto         = models.ForeignKey(Producto, on_delete=models.PROTECT, related_name='ventas')
-    producto_nombre  = models.CharField(max_length=150)   # denormalizado para histórico
+    producto_nombre  = models.CharField(max_length=150)
     cantidad         = models.PositiveIntegerField()
     precio_unitario  = models.DecimalField(max_digits=10, decimal_places=2)
     total            = models.DecimalField(max_digits=12, decimal_places=2)
     fecha            = models.DateField()
+    grupo_venta      = models.CharField(max_length=36, blank=True, null=True)
 
     class Meta:
         db_table = 'ventas'
@@ -26,4 +27,5 @@ class Venta(models.Model):
             'precio_unitario': float(self.precio_unitario),
             'total':           float(self.total),
             'fecha':           str(self.fecha),
+            'grupo_venta':     self.grupo_venta,
         }

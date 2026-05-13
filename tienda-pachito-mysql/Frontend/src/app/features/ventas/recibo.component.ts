@@ -77,7 +77,7 @@ import { CopPipe } from '../../shared/pipes/cop.pipe';
 
           <div class="recibo-footer">
             <p>¡Gracias por su compra!</p>
-            <p>Vuelva pronto 😊</p>
+            <p>Vuelva pronto!</p>
           </div>
         </div>
 

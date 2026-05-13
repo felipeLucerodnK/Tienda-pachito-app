@@ -16,6 +16,7 @@ export interface Venta {
   precio_unitario: number;
   total: number;
   fecha: string;
+  grupo_venta?: string;
 }
 
 export interface Compra {
