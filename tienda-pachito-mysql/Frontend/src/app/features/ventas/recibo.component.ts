@@ -143,16 +143,32 @@ import { CopPipe } from '../../shared/pipes/cop.pipe';
 
     @media print {
       .no-print { display: none !important; }
+
+      body > * { visibility: hidden; }
+
+      app-recibo,
+      app-recibo * { visibility: visible; }
+
       .recibo-backdrop {
-        position: static; background: none;
-        display: block;
+        position: fixed !important;
+        inset: 0 !important;
+        background: none !important;
+        display: flex !important;
+        align-items: flex-start !important;
+        justify-content: center !important;
       }
+
       .recibo-modal {
-        box-shadow: none; padding: 0;
-        border-radius: 0;
+        box-shadow: none !important;
+        border-radius: 0 !important;
+        padding: 0 !important;
+        max-height: none !important;
+        overflow: visible !important;
       }
-      body > * { display: none; }
-      app-recibo { display: block !important; }
+
+      .recibo {
+        width: 280px !important;
+      }
     }
   `]
 })
