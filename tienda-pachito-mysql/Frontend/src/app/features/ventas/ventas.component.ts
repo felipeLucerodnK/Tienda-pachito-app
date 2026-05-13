@@ -7,6 +7,11 @@ import { SoundService } from '../../core/services/sound.service';
 import { Producto, Venta } from '../../core/models/models';
 import { CopPipe } from '../../shared/pipes/cop.pipe';
 
+interface CarritoItem {
+  producto: Producto;
+  cantidad: number;
+}
+
 @Component({
   selector: 'app-ventas',
   standalone: true,
@@ -15,16 +20,14 @@ import { CopPipe } from '../../shared/pipes/cop.pipe';
   styleUrls: ['./ventas.component.scss']
 })
 export class VentasComponent implements OnInit {
-  productos = signal<Producto[]>([]);
-  ventasHoy = signal<Venta[]>([]);
-  productoSeleccionado = signal<Producto | null>(null);
-  cantidad = signal(1);
+  productos  = signal<Producto[]>([]);
+  ventasHoy  = signal<Venta[]>([]);
+  carrito    = signal<CarritoItem[]>([]);
   procesando = signal(false);
 
-  total = computed(() => {
-    const p = this.productoSeleccionado();
-    return p ? p.precio * this.cantidad() : 0;
-  });
+  totalCarrito = computed(() =>
+    this.carrito().reduce((acc, item) => acc + item.producto.precio * item.cantidad, 0)
+  );
 
   hoy = new Date().toLocaleDateString('en-CA');
 
@@ -47,36 +50,86 @@ export class VentasComponent implements OnInit {
     this.api.getVentas(this.hoy).subscribe(v => this.ventasHoy.set(v.slice().reverse()));
   }
 
-  seleccionar(p: Producto) {
+  agregarAlCarrito(p: Producto) {
+    const actual = this.carrito();
+    const idx = actual.findIndex(i => i.producto.id === p.id);
+    if (idx >= 0) {
+      const nueva = [...actual];
+      if (nueva[idx].cantidad < p.stock) {
+        nueva[idx] = { ...nueva[idx], cantidad: nueva[idx].cantidad + 1 };
+        this.carrito.set(nueva);
+      } else {
+        this.toast.mostrar(`Stock máximo: ${p.stock} u.`, 'alerta');
+        return;
+      }
+    } else {
+      this.carrito.set([...actual, { producto: p, cantidad: 1 }]);
+    }
     this.sound.click();
-    this.productoSeleccionado.set(p);
-    this.cantidad.set(1);
   }
 
-  setCantidad(val: number) {
-    this.cantidad.set(Math.max(1, val));
+  incrementar(productoId: number) {
+    const actual = [...this.carrito()];
+    const idx = actual.findIndex(i => i.producto.id === productoId);
+    if (idx >= 0 && actual[idx].cantidad < actual[idx].producto.stock) {
+      actual[idx] = { ...actual[idx], cantidad: actual[idx].cantidad + 1 };
+      this.carrito.set(actual);
+      this.sound.click();
+    }
+  }
+
+  decrementar(productoId: number) {
+    const actual = [...this.carrito()];
+    const idx = actual.findIndex(i => i.producto.id === productoId);
+    if (idx >= 0) {
+      if (actual[idx].cantidad > 1) {
+        actual[idx] = { ...actual[idx], cantidad: actual[idx].cantidad - 1 };
+        this.carrito.set(actual);
+      } else {
+        this.quitarDelCarrito(productoId);
+      }
+      this.sound.click();
+    }
+  }
+
+  quitarDelCarrito(productoId: number) {
+    this.carrito.set(this.carrito().filter(i => i.producto.id !== productoId));
+    this.sound.error();
+  }
+
+  estaEnCarrito(productoId: number): boolean {
+    return this.carrito().some(i => i.producto.id === productoId);
+  }
+
+  getCantidadEnCarrito(productoId: number): number {
+    return this.carrito().find(i => i.producto.id === productoId)?.cantidad || 0;
   }
 
   registrarVenta() {
-    const p = this.productoSeleccionado();
-    if (!p) { this.sound.error(); this.toast.mostrar('Selecciona un producto', 'error'); return; }
-    if (this.cantidad() <= 0) { this.sound.error(); this.toast.mostrar('La cantidad debe ser mayor a 0', 'error'); return; }
+    if (this.carrito().length === 0) {
+      this.sound.error();
+      this.toast.mostrar('El carrito está vacío', 'error');
+      return;
+    }
 
     this.procesando.set(true);
-    this.api.crearVenta({ producto_id: p.id, cantidad: this.cantidad() }).subscribe({
-      next: (v) => {
+    const items = this.carrito().map(i => ({
+      producto_id: i.producto.id,
+      cantidad:    i.cantidad
+    }));
+
+    this.api.crearVentaMultiple({ items }).subscribe({
+      next: () => {
         this.sound.cajaRegistradora();
-        this.toast.mostrar(`Venta registrada: ${v.producto_nombre} x${v.cantidad}`);
-        this.productoSeleccionado.set(null);
-        this.cantidad.set(1);
+        this.toast.mostrar(`Venta registrada: ${this.carrito().length} producto(s)`);
+        this.carrito.set([]);
         this.cargarProductos();
         this.cargarVentasHoy();
         this.procesando.set(false);
       },
       error: (err) => {
         this.sound.error();
-        const msg = err?.error?.error || 'Error al registrar la venta';
-        this.toast.mostrar(msg, 'error');
+        this.toast.mostrar(err?.error?.error || 'Error al registrar la venta', 'error');
         this.procesando.set(false);
       }
     });

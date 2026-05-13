@@ -5,7 +5,7 @@ import { Producto, Venta, Compra, ReporteDiario, ReporteRango } from '../models/
 
 @Injectable({ providedIn: 'root' })
 export class ApiService {
-  private base = 'https://tienda-pachito-app-production-63e3.up.railway.app/api';;
+  private base = 'https://tienda-pachito-app-production-63e3.up.railway.app/api';
 
   constructor(private http: HttpClient) {}
 
@@ -43,6 +43,10 @@ export class ApiService {
 
   crearVenta(data: { producto_id: number; cantidad: number }): Observable<Venta> {
     return this.http.post<Venta>(`${this.base}/ventas/`, data);
+  }
+
+  crearVentaMultiple(data: { items: { producto_id: number; cantidad: number }[] }): Observable<Venta[]> {
+    return this.http.post<Venta[]>(`${this.base}/ventas/multiple/`, data);
   }
 
   // ── COMPRAS ────────────────────────────────────────────────────────────────

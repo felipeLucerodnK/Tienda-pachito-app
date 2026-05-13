@@ -2,7 +2,7 @@
 
   <!-- SIDEBAR -->
   <aside class="sidebar">
-    <div class="sidebar-brand">
+    <div class="sidebar-brand" (dblclick)="toggleTetris()" style="cursor: default;">
       <div class="brand-icon">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
           <rect x="2" y="2" width="9" height="9" rx="2" fill="white" opacity="0.9"/>
@@ -111,11 +111,6 @@
     </div>
   }
 </div>
-
-<!-- BOTÓN FLOTANTE TETRIS -->
-<button class="tetris-fab" (click)="toggleTetris()" title="Mini Tetris">
-  🎮
-</button>
 
 <!-- MODAL TETRIS -->
 @if (mostrarTetris()) {

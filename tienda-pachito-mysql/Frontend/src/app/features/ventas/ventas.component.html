@@ -14,9 +14,9 @@
       <div class="productos-lista">
         @for (p of productos(); track p.id) {
           <div class="producto-item"
-               [class.selected]="productoSeleccionado()?.id === p.id"
+               [class.selected]="estaEnCarrito(p.id)"
                [class.sin-stock]="p.stock === 0"
-               (click)="p.stock > 0 ? seleccionar(p) : null">
+               (click)="p.stock > 0 ? agregarAlCarrito(p) : null">
             <span class="prod-emoji">{{ p.emoji }}</span>
             <div class="prod-info">
               <span class="prod-nombre">{{ p.nombre }}</span>
@@ -28,31 +28,46 @@
             @if (p.alerta_stock && p.stock > 0) {
               <span class="alerta-tag">⚠</span>
             }
+            @if (getCantidadEnCarrito(p.id) > 0) {
+              <span class="carrito-badge">{{ getCantidadEnCarrito(p.id) }}</span>
+            }
           </div>
         }
       </div>
 
-      <div class="form-row-2">
-        <div class="form-group">
-          <label class="section-label">CANTIDAD</label>
-          <input type="number" [value]="cantidad()" (input)="setCantidad(+$any($event.target).value)" min="1" [max]="productoSeleccionado()?.stock || 999" />
+      <!-- CARRITO -->
+      @if (carrito().length > 0) {
+        <div class="section-label" style="margin-top: 16px;">CARRITO</div>
+        <div class="carrito-lista">
+          @for (item of carrito(); track item.producto.id) {
+            <div class="carrito-item">
+              <span class="prod-emoji">{{ item.producto.emoji }}</span>
+              <div class="prod-info">
+                <span class="prod-nombre">{{ item.producto.nombre }}</span>
+                <span class="prod-meta">{{ item.producto.precio | cop }} c/u</span>
+              </div>
+              <div class="carrito-controles">
+                <button (click)="decrementar(item.producto.id)">−</button>
+                <span>{{ item.cantidad }}</span>
+                <button (click)="incrementar(item.producto.id)">+</button>
+              </div>
+              <span class="carrito-subtotal">{{ item.producto.precio * item.cantidad | cop }}</span>
+              <button class="carrito-remove" (click)="quitarDelCarrito(item.producto.id)">×</button>
+            </div>
+          }
         </div>
-        <div class="form-group">
-          <label class="section-label">PRECIO (COP)</label>
-          <input type="text" [value]="productoSeleccionado() ? (productoSeleccionado()!.precio | cop) : ''" readonly placeholder="—" />
-        </div>
-      </div>
+      }
 
       <div class="total-bar">
         <span>Total (COP)</span>
-        <span class="total-valor">{{ total() | cop }}</span>
+        <span class="total-valor">{{ totalCarrito() | cop }}</span>
       </div>
 
-      <button class="btn-venta" [disabled]="!productoSeleccionado() || procesando()" (click)="registrarVenta()">
+      <button class="btn-venta" [disabled]="carrito().length === 0 || procesando()" (click)="registrarVenta()">
         @if (procesando()) {
           Procesando...
         } @else {
-          Registrar Venta
+          Registrar Venta ({{ carrito().length }} producto{{ carrito().length !== 1 ? 's' : '' }})
         }
       </button>
 
@@ -78,9 +93,6 @@
         <div>
           <h2>Inventario de Productos</h2>
           <span class="subtitle">PB-01/PB-03 · COP</span>
-        </div>
-        <div class="alertas-badge">
-          🔔 <span>{{ productos().length }}</span>
         </div>
       </div>
 
