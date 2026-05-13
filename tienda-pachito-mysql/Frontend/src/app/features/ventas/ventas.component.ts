@@ -4,8 +4,10 @@ import { FormsModule } from '@angular/forms';
 import { ApiService } from '../../core/services/api.service';
 import { ToastService } from '../../core/services/toast.service';
 import { SoundService } from '../../core/services/sound.service';
+import { AuthService } from '../../core/services/auth.service';
 import { Producto, Venta } from '../../core/models/models';
 import { CopPipe } from '../../shared/pipes/cop.pipe';
+import { ReciboComponent } from './recibo.component';
 
 interface CarritoItem {
   producto: Producto;
@@ -15,7 +17,7 @@ interface CarritoItem {
 @Component({
   selector: 'app-ventas',
   standalone: true,
-  imports: [CommonModule, FormsModule, CopPipe],
+  imports: [CommonModule, FormsModule, CopPipe, ReciboComponent],
   templateUrl: './ventas.component.html',
   styleUrls: ['./ventas.component.scss']
 })
@@ -24,6 +26,8 @@ export class VentasComponent implements OnInit {
   ventasHoy  = signal<Venta[]>([]);
   carrito    = signal<CarritoItem[]>([]);
   procesando = signal(false);
+  reciboVentas = signal<Venta[]>([]);
+  mostrarRecibo = signal(false);
 
   totalCarrito = computed(() =>
     this.carrito().reduce((acc, item) => acc + item.producto.precio * item.cantidad, 0)
@@ -34,7 +38,8 @@ export class VentasComponent implements OnInit {
   constructor(
     private api: ApiService,
     private toast: ToastService,
-    private sound: SoundService
+    private sound: SoundService,
+    public auth: AuthService
   ) {}
 
   ngOnInit() {
@@ -105,6 +110,16 @@ export class VentasComponent implements OnInit {
     return this.carrito().find(i => i.producto.id === productoId)?.cantidad || 0;
   }
 
+  verRecibo(venta: Venta) {
+    this.reciboVentas.set([venta]);
+    this.mostrarRecibo.set(true);
+  }
+
+  cerrarRecibo() {
+    this.mostrarRecibo.set(false);
+    this.reciboVentas.set([]);
+  }
+
   registrarVenta() {
     if (this.carrito().length === 0) {
       this.sound.error();
@@ -119,7 +134,7 @@ export class VentasComponent implements OnInit {
     }));
 
     this.api.crearVentaMultiple({ items }).subscribe({
-      next: () => {
+      next: (ventas) => {
         this.sound.cajaRegistradora();
         this.toast.mostrar(`Venta registrada: ${this.carrito().length} producto(s)`);
         this.carrito.set([]);

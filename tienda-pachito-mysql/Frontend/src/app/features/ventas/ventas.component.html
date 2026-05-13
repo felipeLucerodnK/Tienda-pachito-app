@@ -83,6 +83,7 @@
             <span class="vr-meta">x{{ v.cantidad }} · {{ v.fecha }}</span>
           </div>
           <span class="vr-total">{{ v.total | cop }}</span>
+          <button class="btn-recibo" title="Ver recibo" (click)="verRecibo(v)">🧾</button>
         </div>
       }
     </div>
@@ -126,3 +127,12 @@
     </div>
   </div>
 </div>
+
+<!-- RECIBO -->
+@if (mostrarRecibo()) {
+  <app-recibo
+    [ventas]="reciboVentas()"
+    [cajero]="auth.currentUser()?.nombre || auth.currentUser()?.username || ''"
+    (cerrar)="cerrarRecibo()"
+  />
+}
