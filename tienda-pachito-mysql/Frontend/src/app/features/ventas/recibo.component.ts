@@ -182,6 +182,54 @@ export class ReciboComponent {
   }
 
   imprimir() {
-    window.print();
+    const contenido = document.getElementById('recibo-contenido');
+    if (!contenido) return;
+
+    const ventana = window.open('', '_blank', 'width=400,height=600');
+    if (!ventana) return;
+
+    ventana.document.write(`
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <meta charset="utf-8">
+          <title>Recibo - Tienda Pachito</title>
+          <style>
+            * { margin: 0; padding: 0; box-sizing: border-box; }
+            body {
+              font-family: 'Courier New', monospace;
+              font-size: 13px;
+              color: #111;
+              padding: 20px;
+              width: 300px;
+            }
+            .recibo-header { text-align: center; margin-bottom: 8px; }
+            .recibo-logo { font-size: 2rem; }
+            h2 { font-size: 1rem; margin: 4px 0; }
+            .recibo-sub { color: #666; font-size: 11px; }
+            .recibo-divider { color: #999; margin: 6px 0; font-size: 11px; }
+            .recibo-fila { display: flex; justify-content: space-between; margin-bottom: 3px; }
+            .recibo-items-header { display: flex; justify-content: space-between; font-weight: bold; font-size: 11px; }
+            .recibo-item { display: flex; justify-content: space-between; margin-top: 5px; }
+            .item-nombre { flex: 1; }
+            .item-cant { width: 35px; text-align: center; }
+            .item-total { width: 80px; text-align: right; }
+            .item-precio-unit { color: #666; font-size: 11px; margin-bottom: 3px; }
+            .recibo-total-final { font-weight: 900; font-size: 1rem; margin-top: 4px; }
+            .recibo-footer { text-align: center; margin-top: 8px; color: #666; font-size: 11px; }
+          </style>
+        </head>
+        <body>
+          ${contenido.innerHTML}
+        </body>
+      </html>
+    `);
+
+    ventana.document.close();
+    ventana.focus();
+    setTimeout(() => {
+      ventana.print();
+      ventana.close();
+    }, 300);
   }
 }
