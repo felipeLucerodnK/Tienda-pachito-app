@@ -12,7 +12,7 @@ import { CopPipe } from '../../shared/pipes/cop.pipe';
       <div class="recibo-modal" (click)="$event.stopPropagation()">
 
         <div class="recibo-acciones no-print">
-          <button class="btn-imprimir" (click)="imprimir()">🖨️ Imprimir</button>
+          <button class="btn-imprimir" (click)="imprimir()">Imprimir</button>
           <button class="btn-cerrar" (click)="cerrar.emit()">× Cerrar</button>
         </div>
 
