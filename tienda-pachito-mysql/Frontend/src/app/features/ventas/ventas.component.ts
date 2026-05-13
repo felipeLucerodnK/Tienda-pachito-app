@@ -52,7 +52,9 @@ export class VentasComponent implements OnInit {
   }
 
   cargarVentasHoy() {
-    this.api.getVentas(this.hoy).subscribe(v => this.ventasHoy.set(v.slice().reverse()));
+    this.api.getVentas(this.hoy).subscribe(v => 
+      this.ventasHoy.set([...v].sort((a, b) => b.id - a.id))
+    );
   }
 
   agregarAlCarrito(p: Producto) {
