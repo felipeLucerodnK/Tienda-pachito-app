@@ -35,6 +35,12 @@ export interface ReporteDiario {
   total_transacciones: number;
   total_unidades_vendidas: number;
   detalle_ventas: Venta[];
+  detalle_agrupado: {
+    grupo_venta: string;
+    fecha: string;
+    productos: Venta[];
+    total: number;
+  }[];
   resumen_por_producto: { producto: string; cantidad: number; total: number }[];
 }
 

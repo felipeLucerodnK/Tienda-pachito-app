@@ -64,41 +64,49 @@
         }
       </div>
 
-      <!-- DETALLE VENTAS -->
+      <!-- DETALLE TRANSACCIONES AGRUPADAS -->
       <div class="card">
         <h2>Detalle de transacciones</h2>
-        @if (r.detalle_ventas.length === 0) {
+        @if (!r.detalle_agrupado || r.detalle_agrupado.length === 0) {
           <div class="empty">No hay transacciones en esta fecha</div>
         }
         <div class="tabla-wrap">
-          <table class="tabla-detalle">
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Producto</th>
-                <th>Cant.</th>
-                <th>P. Unit.</th>
-                <th>Total</th>
-              </tr>
-            </thead>
-            <tbody>
-              @for (v of r.detalle_ventas; track v.id) {
-                <tr>
-                  <td class="td-id">{{ v.id }}</td>
-                  <td>{{ v.producto_nombre }}</td>
-                  <td>{{ v.cantidad }}</td>
-                  <td>{{ v.precio_unitario | cop }}</td>
-                  <td class="td-total">{{ v.total | cop }}</td>
-                </tr>
-              }
-            </tbody>
-            <tfoot>
-              <tr>
-                <td colspan="4" class="tf-label">TOTAL</td>
-                <td class="tf-total">{{ r.total_ingresos | cop }}</td>
-              </tr>
-            </tfoot>
-          </table>
+          @for (grupo of r.detalle_agrupado; track grupo.grupo_venta) {
+            <div class="grupo-venta">
+              <div class="grupo-header">
+                <span class="grupo-titulo">
+                  🧾 Venta · {{ grupo.productos.length }} producto{{ grupo.productos.length !== 1 ? 's' : '' }}
+                </span>
+                <span class="grupo-total">{{ grupo.total | cop }}</span>
+              </div>
+              <table class="tabla-detalle">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Producto</th>
+                    <th>Cant.</th>
+                    <th>P. Unit.</th>
+                    <th>Total</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (v of grupo.productos; track v.id) {
+                    <tr>
+                      <td class="td-id">{{ v.id }}</td>
+                      <td>{{ v.producto_nombre }}</td>
+                      <td>{{ v.cantidad }}</td>
+                      <td>{{ v.precio_unitario | cop }}</td>
+                      <td class="td-total">{{ v.total | cop }}</td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          }
+          <div class="grupo-footer">
+            <span>TOTAL DEL DÍA</span>
+            <span class="tf-total">{{ r.total_ingresos | cop }}</span>
+          </div>
         </div>
       </div>
     </div>

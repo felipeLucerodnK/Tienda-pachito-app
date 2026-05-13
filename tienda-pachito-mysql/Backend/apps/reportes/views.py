@@ -15,27 +15,48 @@ def reporte_diario(request):
 
     totales = ventas.aggregate(
         total_ingresos=Sum('total'),
-        total_transacciones=Count('id'),
         total_unidades=Sum('cantidad'),
     )
+
+    # Contar transacciones por grupo_venta
+    grupos = set(v['grupo_venta'] for v in ventas_list if v.get('grupo_venta'))
+    ventas_sin_grupo = sum(1 for v in ventas_list if not v.get('grupo_venta'))
+    total_transacciones = len(grupos) + ventas_sin_grupo
 
     # Agrupar por producto
     productos_vendidos = defaultdict(lambda: {'cantidad': 0, 'total': 0.0})
     for v in ventas_list:
         productos_vendidos[v['producto_nombre']]['cantidad'] += v['cantidad']
-        productos_vendidos[v['producto_nombre']]['total'] += v['total']
+        productos_vendidos[v['producto_nombre']]['total']    += v['total']
 
     resumen_productos = [
         {'producto': nombre, **datos}
         for nombre, datos in productos_vendidos.items()
     ]
 
+    # Agrupar detalle por grupo_venta
+    grupos_dict = defaultdict(list)
+    for v in ventas_list:
+        key = v.get('grupo_venta') or f"solo_{v['id']}"
+        grupos_dict[key].append(v)
+
+    detalle_agrupado = [
+        {
+            'grupo_venta': key,
+            'fecha': items[0]['fecha'],
+            'productos': items,
+            'total': sum(i['total'] for i in items),
+        }
+        for key, items in grupos_dict.items()
+    ]
+
     return Response({
         'fecha':                   fecha,
         'total_ingresos':          float(totales['total_ingresos'] or 0),
-        'total_transacciones':     totales['total_transacciones'] or 0,
+        'total_transacciones':     total_transacciones,
         'total_unidades_vendidas': totales['total_unidades'] or 0,
         'detalle_ventas':          ventas_list,
+        'detalle_agrupado':        detalle_agrupado,
         'resumen_por_producto':    resumen_productos,
     })
 
@@ -50,22 +71,29 @@ def reporte_rango(request):
 
     totales = ventas.aggregate(
         total_ingresos=Sum('total'),
-        total_transacciones=Count('id'),
     )
 
-    # Agrupar por día
-    por_dia = defaultdict(lambda: {'ingresos': 0.0, 'transacciones': 0})
+    # Contar transacciones por grupo_venta por día
+    por_dia = defaultdict(lambda: {'ingresos': 0.0, 'grupos': set(), 'sin_grupo': 0})
     for v in ventas_list:
-        por_dia[v['fecha']]['ingresos']       += v['total']
-        por_dia[v['fecha']]['transacciones']  += 1
+        fecha = v['fecha']
+        por_dia[fecha]['ingresos'] += v['total']
+        if v.get('grupo_venta'):
+            por_dia[fecha]['grupos'].add(v['grupo_venta'])
+        else:
+            por_dia[fecha]['sin_grupo'] += 1
 
     return Response({
         'fecha_inicio':        fecha_inicio,
         'fecha_fin':           fecha_fin,
         'total_ingresos':      float(totales['total_ingresos'] or 0),
-        'total_transacciones': totales['total_transacciones'] or 0,
+        'total_transacciones': len(set(v.get('grupo_venta') or f"solo_{v['id']}" for v in ventas_list)),
         'por_dia': [
-            {'fecha': f, **datos}
+            {
+                'fecha': f,
+                'ingresos': datos['ingresos'],
+                'transacciones': len(datos['grupos']) + datos['sin_grupo']
+            }
             for f, datos in sorted(por_dia.items())
         ],
     })

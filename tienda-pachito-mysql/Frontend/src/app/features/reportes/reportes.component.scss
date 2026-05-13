@@ -104,3 +104,33 @@
 
 .btn { display: inline-flex; align-items: center; gap: 7px; padding: 9px 18px; border-radius: 9px; font-size: 14px; font-weight: 600; cursor: pointer; text-decoration: none; transition: all 0.15s; border: none; }
 .btn-primary { background: #2ecc71; color: white; &:hover { background: #27ae60; } }
+
+.grupo-venta {
+  margin-bottom: 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.grupo-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #f9fafb;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.85rem;
+}
+
+.grupo-titulo { font-weight: 600; color: #374151; }
+.grupo-total  { font-weight: 700; color: #0f3460; }
+
+.grupo-footer {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.75rem;
+  font-weight: 700;
+  border-top: 2px solid #e5e7eb;
+  margin-top: 0.5rem;
+}
+
+.tf-total { color: #0f3460; }
