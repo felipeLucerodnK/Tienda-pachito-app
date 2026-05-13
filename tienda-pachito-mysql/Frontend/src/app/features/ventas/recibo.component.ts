@@ -185,7 +185,7 @@ export class ReciboComponent {
     const contenido = document.getElementById('recibo-contenido');
     if (!contenido) return;
 
-    const ventana = window.open('', '_blank', 'width=400,height=600');
+    const ventana = window.open('', '_blank', 'width=200,height=300');
     if (!ventana) return;
 
     ventana.document.write(`
