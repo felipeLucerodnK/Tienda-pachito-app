@@ -57,6 +57,8 @@
   td { padding: 12px 12px; font-size: 13px; color: #333; border-bottom: 1px solid #f5f5f0; }
   tr:last-child td { border-bottom: none; }
   tr.row-alert td { background: #fffdf0; }
+  max-height: 400px;
+  overflow-y: auto;
 }
 .td-id { font-size: 11px; color: #bbb; font-weight: 600; }
 .td-precio { font-weight: 600; color: #1a1a2e; }
