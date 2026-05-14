@@ -46,6 +46,6 @@ button[type="submit"] {
   border: none; border-radius: 8px;
   font-size: 1rem; font-weight: 600;
   cursor: pointer; transition: background 0.2s;
-  &:hover:not(:disabled) { background: #16213e; }
+  &:hover:not(:disabled) { background: #27ae60; }
   &:disabled { opacity: 0.7; cursor: not-allowed; }
 }
