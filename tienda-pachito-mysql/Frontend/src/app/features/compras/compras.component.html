@@ -13,7 +13,7 @@
 
       <div class="form-group">
         <label>Producto *</label>
-        <select [(ngModel)]="form.producto_id">
+        <select [value]="productoId()" (change)="productoId.set(+$any($event.target).value)">
           <option value="0" disabled>Seleccionar producto...</option>
           @for (p of productos(); track p.id) {
             <option [value]="p.id">{{ p.emoji }} {{ p.nombre }} — Stock actual: {{ p.stock }}</option>
@@ -34,11 +34,11 @@
       <div class="form-row">
         <div class="form-group">
           <label>Cantidad a comprar *</label>
-          <input type="number" [(ngModel)]="form.cantidad" min="1" placeholder="0" />
+          <input type="number" [value]="cantidad()" (input)="cantidad.set(+$any($event.target).value)" min="1" placeholder="0" />
         </div>
         <div class="form-group">
           <label>Costo unitario (COP)</label>
-          <input type="number" [(ngModel)]="form.costo_unitario" min="0" placeholder="0" />
+          <input type="number" [value]="costoUnitario()" (input)="costoUnitario.set(+$any($event.target).value)" min="0" placeholder="0" />
         </div>
       </div>
 
@@ -47,7 +47,7 @@
         <span class="total-val">{{ totalCompra() | cop }}</span>
       </div>
 
-      <button class="btn-registrar" [disabled]="procesando() || !form.producto_id || form.cantidad <= 0" (click)="registrar()">
+      <button class="btn-registrar" [disabled]="procesando() || !productoId() || cantidad() <= 0" (click)="registrar()">
         @if (procesando()) { Registrando... } @else { Registrar Compra }
       </button>
     </div>

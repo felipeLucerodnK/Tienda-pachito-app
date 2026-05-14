@@ -15,18 +15,20 @@ import { CopPipe } from '../../shared/pipes/cop.pipe';
   styleUrls: ['./compras.component.scss']
 })
 export class ComprasComponent implements OnInit {
-  productos = signal<Producto[]>([]);
-  historial = signal<Compra[]>([]);
+  productos  = signal<Producto[]>([]);
+  historial  = signal<Compra[]>([]);
   procesando = signal(false);
 
-  form = { producto_id: 0, cantidad: 1, costo_unitario: 0 };
+  productoId    = signal(0);
+  cantidad      = signal(1);
+  costoUnitario = signal(0);
 
   productoSeleccionado = computed(() =>
-    this.productos().find(p => p.id === +this.form.producto_id) || null
+    this.productos().find(p => p.id === this.productoId()) || null
   );
 
   totalCompra = computed(() =>
-    this.form.cantidad * this.form.costo_unitario
+    this.cantidad() * this.costoUnitario()
   );
 
   constructor(
@@ -41,21 +43,23 @@ export class ComprasComponent implements OnInit {
   }
 
   registrar() {
-    if (!this.form.producto_id || this.form.cantidad <= 0) {
+    if (!this.productoId() || this.cantidad() <= 0) {
       this.sound.error();
       this.toast.mostrar('Selecciona producto y cantidad', 'error');
       return;
     }
     this.procesando.set(true);
     this.api.crearCompra({
-      producto_id: +this.form.producto_id,
-      cantidad: this.form.cantidad,
-      costo_unitario: this.form.costo_unitario
+      producto_id:    this.productoId(),
+      cantidad:       this.cantidad(),
+      costo_unitario: this.costoUnitario()
     }).subscribe({
       next: () => {
         this.sound.compra();
         this.toast.mostrar('Compra registrada. Stock actualizado.');
-        this.form = { producto_id: 0, cantidad: 1, costo_unitario: 0 };
+        this.productoId.set(0);
+        this.cantidad.set(1);
+        this.costoUnitario.set(0);
         this.api.getCompras().subscribe(c => this.historial.set(c.slice().reverse()));
         this.api.getProductos().subscribe(p => this.productos.set(p));
         this.procesando.set(false);
