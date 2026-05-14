@@ -28,7 +28,13 @@
   &:disabled { background: #b8d9f0; cursor: not-allowed; }
 }
 
-.historial-list { display: flex; flex-direction: column; gap: 0; }
+.historial-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  max-height: 400px;
+  overflow-y: auto;
+}
 .compra-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #f0f0ea; &:last-child { border-bottom: none; } }
 .compra-info { display: flex; flex-direction: column; gap: 2px; }
 .compra-nombre { font-size: 14px; font-weight: 500; color: #333; }
