@@ -24,7 +24,8 @@ export class InventarioComponent implements OnInit {
 
   productosFiltrados = computed(() =>
     this.productos().filter(p =>
-      p.nombre.toLowerCase().includes(this.busqueda().toLowerCase())
+      p.nombre.toLowerCase().includes(this.busqueda().toLowerCase()) ||
+      p.id.toString().includes(this.busqueda())
     )
   );
 
