@@ -70,3 +70,31 @@
 .btn { display: inline-flex; align-items: center; gap: 7px; padding: 10px 20px; border-radius: 9px; font-size: 14px; font-weight: 600; cursor: pointer; border: none; transition: all 0.15s; }
 .btn-primary { background: #2ecc71; color: white; &:hover { background: #27ae60; } }
 .btn-ghost { background: #fff; color: #666; border: 1px solid #ddd; &:hover { background: #f5f5f0; } }
+
+.search-bar {
+  display: flex; align-items: center; gap: 0.75rem;
+  background: white; border: 2px solid #e5e7eb;
+  border-radius: 10px; padding: 0.6rem 1rem;
+  margin-bottom: 1rem; transition: border-color 0.2s;
+
+  &:focus-within { border-color: #0f3460; }
+
+  svg { color: #9ca3af; flex-shrink: 0; }
+
+  input {
+    border: none; outline: none; flex: 1;
+    font-size: 0.9rem; background: transparent;
+    &::placeholder { color: #9ca3af; }
+  }
+}
+
+.search-clear {
+  background: none; border: none; cursor: pointer;
+  color: #9ca3af; font-size: 1.1rem; line-height: 1;
+  padding: 0; &:hover { color: #111; }
+}
+
+.empty-search {
+  text-align: center; padding: 2rem;
+  color: #6b7280; font-style: italic;
+}

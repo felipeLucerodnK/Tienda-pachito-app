@@ -1,4 +1,4 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ApiService } from '../../core/services/api.service';
@@ -19,6 +19,14 @@ export class InventarioComponent implements OnInit {
   mostrarModal = signal(false);
   modoEdicion = signal(false);
   cargando = signal(false);
+  busqueda = signal('');
+
+
+  productosFiltrados = computed(() =>
+    this.productos().filter(p =>
+      p.nombre.toLowerCase().includes(this.busqueda().toLowerCase())
+    )
+  );
 
   emojis = ['🍞','🥛','🍎','🌾','🫙','🥚','🧃','🧈','🍗','🥩','🐟','🍅','🥕','🧄','🧅','☕','🍫','🧂','📦','🛒'];
 

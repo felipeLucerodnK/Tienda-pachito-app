@@ -10,6 +10,15 @@
     </button>
   </div>
 
+  <!-- BARRA DE BÚSQUEDA -->
+  <div class="search-bar">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <input type="text" [value]="busqueda()" (input)="busqueda.set($any($event.target).value)" placeholder="Buscar producto..." />
+    @if (busqueda()) {
+      <button class="search-clear" (click)="busqueda.set('')">×</button>
+    }
+  </div>
+
   @if (cargando()) {
     <div class="loading">Cargando productos...</div>
   }
@@ -28,7 +37,7 @@
         </tr>
       </thead>
       <tbody>
-        @for (p of productos(); track p.id) {
+        @for (p of productosFiltrados(); track p.id) {
           <tr>
             <td class="td-id">PB-{{ p.id.toString().padStart(2,'0') }}</td>
             <td>
@@ -59,6 +68,11 @@
                 </button>
               </div>
             </td>
+          </tr>
+        }
+        @if (productosFiltrados().length === 0) {
+          <tr>
+            <td colspan="7" class="empty-search">No se encontraron productos con "{{ busqueda }}"</td>
           </tr>
         }
       </tbody>
