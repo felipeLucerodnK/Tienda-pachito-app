@@ -5,12 +5,12 @@
       <p class="subtitle">PB-02 · COP</p>
     </div>
   </div>
-
+ 
   <div class="ventas-grid">
     <!-- PANEL IZQUIERDO: FORMULARIO -->
     <div class="card venta-form">
       <div class="section-label">SELECCIONAR PRODUCTO</div>
-
+ 
       <div class="productos-lista">
         @for (p of productos(); track p.id) {
           <div class="producto-item"
@@ -34,7 +34,7 @@
           </div>
         }
       </div>
-
+ 
       <!-- CARRITO -->
       @if (carrito().length > 0) {
         <div class="section-label" style="margin-top: 16px;">CARRITO</div>
@@ -57,12 +57,12 @@
           }
         </div>
       }
-
+ 
       <div class="total-bar">
         <span>Total (COP)</span>
         <span class="total-valor">{{ totalCarrito() | cop }}</span>
       </div>
-
+ 
       <button class="btn-venta" [disabled]="carrito().length === 0 || procesando()" (click)="registrarVenta()">
         @if (procesando()) {
           Procesando...
@@ -70,7 +70,7 @@
           Registrar Venta ({{ carrito().length }} producto{{ carrito().length !== 1 ? 's' : '' }})
         }
       </button>
-
+ 
       <!-- RECIENTES -->
       <div class="recientes-header section-label" style="margin-top: 24px;">RECIENTES</div>
       @if (gruposVentasHoy().length === 0) {
@@ -94,7 +94,7 @@
         </div>
       }
     </div>
-
+ 
     <!-- PANEL DERECHO: INVENTARIO RÁPIDO -->
     <div class="card inventario-rapido">
       <div class="card-header">
@@ -103,38 +103,40 @@
           <span class="subtitle">PB-01/PB-03 · COP</span>
         </div>
       </div>
-
-      <table class="tabla-mini">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Producto</th>
-            <th>Precio (COP)</th>
-            <th>Stock</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (p of productos(); track p.id) {
-            <tr [class.row-alert]="p.alerta_stock">
-              <td class="td-id">PB-{{ p.id.toString().padStart(2,'0') }}</td>
-              <td>
-                <span class="prod-emoji-sm">{{ p.emoji }}</span>
-                {{ p.nombre }}
-              </td>
-              <td class="td-precio">{{ p.precio | cop }} <span class="eq">=</span></td>
-              <td>
-                <span class="stock-pill" [class.stock-ok]="!p.alerta_stock" [class.stock-low]="p.alerta_stock && p.stock > 0" [class.stock-empty]="p.stock === 0">
-                  {{ p.stock }} u.
-                </span>
-              </td>
+ 
+      <div class="tabla-mini-wrapper">
+        <table class="tabla-mini">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Producto</th>
+              <th>Precio (COP)</th>
+              <th>Stock</th>
             </tr>
-          }
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            @for (p of productos(); track p.id) {
+              <tr [class.row-alert]="p.alerta_stock">
+                <td class="td-id">PB-{{ p.id.toString().padStart(2,'0') }}</td>
+                <td>
+                  <span class="prod-emoji-sm">{{ p.emoji }}</span>
+                  {{ p.nombre }}
+                </td>
+                <td class="td-precio">{{ p.precio | cop }} <span class="eq">=</span></td>
+                <td>
+                  <span class="stock-pill" [class.stock-ok]="!p.alerta_stock" [class.stock-low]="p.alerta_stock && p.stock > 0" [class.stock-empty]="p.stock === 0">
+                    {{ p.stock }} u.
+                  </span>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 </div>
-
+ 
 <!-- RECIBO -->
 @if (mostrarRecibo()) {
   <app-recibo
@@ -143,3 +145,4 @@
     (cerrar)="cerrarRecibo()"
   />
 }
+ 
