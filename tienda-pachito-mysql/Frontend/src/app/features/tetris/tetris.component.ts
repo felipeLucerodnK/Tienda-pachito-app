@@ -23,7 +23,7 @@ const PIEZAS = [
   template: `
     <div class="tetris-wrapper">
       <div class="tetris-header">
-        <span>🎮 Tetris</span>
+        <span>Tetris coso</span>
         <div class="tetris-info">
           <span>Puntos: <strong>{{ puntos() }}</strong></span>
           <span>Nivel: <strong>{{ nivel() }}</strong></span>
