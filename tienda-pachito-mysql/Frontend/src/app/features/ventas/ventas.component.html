@@ -11,8 +11,16 @@
     <div class="card venta-form">
       <div class="section-label">SELECCIONAR PRODUCTO</div>
  
+      <input
+        class="buscador-productos"
+        type="text"
+        placeholder="Buscar producto..."
+        [ngModel]="busqueda()"
+        (ngModelChange)="busqueda.set($event)"
+      />
+ 
       <div class="productos-lista">
-        @for (p of productos(); track p.id) {
+        @for (p of productosFiltrados(); track p.id) {
           <div class="producto-item"
                [class.selected]="estaEnCarrito(p.id)"
                [class.sin-stock]="p.stock === 0"

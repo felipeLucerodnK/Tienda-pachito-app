@@ -28,6 +28,15 @@ export class VentasComponent implements OnInit {
   procesando    = signal(false);
   reciboVentas  = signal<Venta[]>([]);
   mostrarRecibo = signal(false);
+  busqueda      = signal('');
+
+  productosFiltrados = computed(() => {
+    const q = this.busqueda().toLowerCase().trim();
+    if (!q) return this.productos();
+    return this.productos().filter(p =>
+      p.nombre.toLowerCase().includes(q)
+    );
+  });
 
   totalCarrito = computed(() =>
     this.carrito().reduce((acc, item) => acc + item.producto.precio * item.cantidad, 0)
@@ -141,8 +150,6 @@ export class VentasComponent implements OnInit {
       this.toast.mostrar('El carrito está vacío', 'error');
       return;
     }
-    
-    
 
     this.procesando.set(true);
     const items = this.carrito().map(i => ({

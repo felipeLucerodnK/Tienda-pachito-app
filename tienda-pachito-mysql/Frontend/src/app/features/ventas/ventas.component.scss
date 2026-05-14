@@ -121,3 +121,23 @@
   opacity: 0.6; transition: opacity 0.2s;
   &:hover { opacity: 1; }
 }
+
+.buscador-productos {
+  width: 100%;
+  padding: 9px 12px;
+  border: 1px solid #e8e8e3;
+  border-radius: 9px;
+  font-size: 14px;
+  margin-bottom: 10px;
+  box-sizing: border-box;
+  transition: border-color 0.15s;
+
+  &:focus {
+    outline: none;
+    border-color: #2ecc71;
+  }
+
+  &::placeholder {
+    color: #ccc;
+  }
+}
