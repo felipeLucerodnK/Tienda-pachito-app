@@ -18,7 +18,7 @@ export class DashboardComponent implements OnInit {
   alertas = signal(0);
   ventasRecientes = signal<any[]>([]);
   productosAlerta = signal<any[]>([]);
-  hoy = new Date().toISOString().split('en-CA')[0];
+  hoy = new Date().toLocaleDateString('en-CA', { timeZone: 'America/Bogota' });
 
   constructor(private api: ApiService) {}
 
