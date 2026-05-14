@@ -18,7 +18,6 @@ import { CopPipe } from '../../shared/pipes/cop.pipe';
 
         <div class="recibo" id="recibo-contenido">
           <div class="recibo-header">
-            <div class="recibo-logo">🏪</div>
             <h2>Tienda Pachito</h2>
             <p class="recibo-sub">Sistema de Gestión</p>
             <div class="recibo-divider">--------------------------------</div>
